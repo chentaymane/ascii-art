@@ -11,10 +11,14 @@ func main() {
 		fmt.Println("error: invalid number of inputs")
 		return
 	}
+	if len(os.Args[1]) == 0 {
+		return
+	}
+	linesInput := []string{}
 
 	input := os.Args[1]
 
-	linesInput := strings.Split(input, "\\n")
+	linesInput = strings.Split(input, "\\n")
 
 	font := "standard.txt"
 	content, err := os.ReadFile(font)
@@ -23,9 +27,12 @@ func main() {
 		return
 	}
 
+	// fmt.Printf("%q", content[:12])
 	text := strings.ReplaceAll(string(content), "\r\n", "\n")
-	fontLines := strings.Split(text, "\n")
+	// fmt.Printf("%q", text[:12])
 
+	fontLines := strings.Split(text, "\n")
+	fmt.Println(len(linesInput))
 	for _, line := range linesInput {
 
 		if line == "" {
@@ -43,6 +50,7 @@ func main() {
 
 			index := int(((char - ' ') * 9) + 1)
 			chars[i] = fontLines[index : index+8]
+
 		}
 
 		for height := 0; height < 8; height++ {
