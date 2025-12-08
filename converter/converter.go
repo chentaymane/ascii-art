@@ -6,25 +6,27 @@ import (
 	"strings"
 )
 
-func Run(input string, font_path string) string {
-	linesInput := strings.Split(input, "\\n")
-	final := ""
+func Run(input string, font string) string {
+	if len(input) == 0 {
+		return ""
+	}
+	input = strings.ReplaceAll(input, "\\n", "\n")
+	linesInput := strings.Split(input, "\n")
+	if linesInput[0] == "" && linesInput[1] == "" {
+		linesInput = linesInput[1:] // remove extra element from strings.Split
+	}
 
-	font := "standard.txt"
-	content, err := os.ReadFile(font)
+	content, err := os.ReadFile(font + ".txt")
 	if err != nil {
 		fmt.Println(err)
 		return ""
 	}
 
-	// fmt.Printf("%q", content[:12])
 	text := strings.ReplaceAll(string(content), "\r\n", "\n")
-	// fmt.Printf("%q", text[:12])
 
 	fontLines := strings.Split(text, "\n")
-	// fmt.Println(len(linesInput))
+	final := ""
 	for _, line := range linesInput {
-
 		if line == "" {
 			final += "\n"
 			continue
@@ -34,13 +36,12 @@ func Run(input string, font_path string) string {
 
 		for i, char := range runes {
 			if char < ' ' || char > '~' {
-				fmt.Println("unsupported character")
+				fmt.Println("Error: unsupported character.")
 				return ""
 			}
 
 			index := int(((char - ' ') * 9) + 1)
 			chars[i] = fontLines[index : index+8]
-
 		}
 
 		for height := 0; height < 8; height++ {
@@ -49,7 +50,6 @@ func Run(input string, font_path string) string {
 			}
 			final += "\n"
 		}
-
 	}
 	return final
 }

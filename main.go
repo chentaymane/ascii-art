@@ -4,17 +4,20 @@ import (
 	"fmt"
 	"os"
 
-	"main/converter"
+	"ascii-art/converter"
 )
 
 func main() {
-	if len(os.Args) != 2 {
-		fmt.Println("error: invalid number of inputs")
-		return
-	}
-	if len(os.Args[1]) == 0 {
+	if len(os.Args) < 2 {
 		return
 	}
 
-	fmt.Print(converter.Run(os.Args[1], "standard.txt"))
+	font := "standard"
+	if len(os.Args) > 2 {
+		switch os.Args[2] {
+		case "thinkertoy", "shadow":
+			font = os.Args[2]
+		}
+	}
+	fmt.Print(converter.Run(os.Args[1], "./banner/"+font))
 }
