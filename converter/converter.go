@@ -6,13 +6,16 @@ import (
 	"strings"
 )
 
-func Run(input string, font string) string {
+const 	ErrMsg = "Usage: go run . [OPTION] [STRING] [BANNER]\n\nEX: go run . --output=<fileName.txt> something standard"
+
+
+func Run(input string, font string, file string) string {
 	if len(input) == 0 {
-		return ""
+		return "Usage: go run . [OPTION] [STRING] [BANNER]\n\nEX: go run . --output=<fileName.txt> something standard"
 	}
 	input = strings.ReplaceAll(input, "\\n", "\n")
 	linesInput := strings.Split(input, "\n")
-	if linesInput[0] == "" && linesInput[1] == "" {
+	if isOnlyNewline(input) {
 		linesInput = linesInput[1:] // remove extra element from strings.Split
 	}
 
@@ -37,7 +40,7 @@ func Run(input string, font string) string {
 		for i, char := range runes {
 			if char < ' ' || char > '~' {
 				fmt.Println("Error: unsupported character.")
-				return ""
+				return "Usage: go run . [OPTION] [STRING] [BANNER]\n\nEX: go run . --output=<fileName.txt> something standard"
 			}
 
 			index := int(((char - ' ') * 9) + 1)
@@ -51,5 +54,26 @@ func Run(input string, font string) string {
 			final += "\n"
 		}
 	}
-	return final
+	if file != "" {
+		if strings.HasPrefix(file, "--output=") && strings.HasSuffix(file, ".txt") {
+			file = file[len("--output="):]
+			if file != "" {
+
+				data := []byte(final)
+				// 0644 sets the file permissions (read and write for owner, read for others)
+				err := os.WriteFile(file, data, 0o644)
+				if err != nil {
+					fmt.Print(err)
+				}
+			} else {
+				return "Usage: go run . [OPTION] [STRING] [BANNER]\n\nEX: go run . --output=<fileName.txt> something standard"
+			}
+		} else {
+			return "Usage: go run . [OPTION] [STRING] [BANNER]\n\nEX: go run . --output=<fileName.txt> something standard"
+		}
+	} else {
+		fmt.Print(final)
+	}
+	return ""
 }
+

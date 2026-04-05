@@ -1,23 +1,20 @@
 package main
 
 import (
+	"ascii-art/converter"
 	"fmt"
 	"os"
-
-	"ascii-art/converter"
 )
 
 func main() {
-	if len(os.Args) < 2 {
+	text, font, file, ok := converter.ParseArgs(os.Args)
+	if !ok {
+		fmt.Println(converter.ErrMsg)
 		return
 	}
 
-	font := "standard"
-	if len(os.Args) > 2 {
-		switch os.Args[2] {
-		case "thinkertoy", "shadow":
-			font = os.Args[2]
-		}
+	err := converter.Run(text, "./banner/"+font, file)
+	if err != "" {
+		fmt.Println(converter.ErrMsg)
 	}
-	fmt.Print(converter.Run(os.Args[1], "./banner/"+font))
 }
